@@ -1,6 +1,6 @@
-use rppal::i2c::{I2c};
+use rppal::i2c::I2c;
 
-use tsl2591_sensor::tsl2591_sensor::{TSL2591Sensor};
+use tsl2591_sensor::tsl2591_sensor::TSL2591Sensor;
 
 use std::thread::sleep;
 use std::time::Duration;

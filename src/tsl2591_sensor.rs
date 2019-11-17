@@ -1,6 +1,5 @@
-/// This is largely a port of
-/// https://github.com/adafruit/Adafruit_CircuitPython_TSL2591/blob/master/adafruit_tsl2591.py
-
+//! This is largely a port of
+//! https://github.com/adafruit/Adafruit_CircuitPython_TSL2591/blob/master/adafruit_tsl2591.py
 use rppal::i2c;
 use std::error;
 use std::fmt;
@@ -30,16 +29,16 @@ const TSL2591_MAX_COUNT: u16 = 0xFFFF;
 
 /// Available Gains for the sensor
 #[repr(u8)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Gain {
     /// gain of 1x
-    LOW = 0x00,  // 1x
+    LOW = 0x00, // 1x
     /// gain of 25x
-    MED = 0x10,  // 25x
+    MED = 0x10, // 25x
     /// gain of 428x
     HIGH = 0x20, // 428x
     /// gain of 9876x
-    MAX = 0x30,  // 9876x
+    MAX = 0x30, // 9876x
 }
 
 impl Gain {
@@ -67,7 +66,7 @@ impl fmt::Display for Gain {
 
 /// Available integration times for the sensor
 #[repr(u8)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum IntegrationTime {
     /// 100ms integration time
     Time100ms = 0x00,
@@ -140,7 +139,7 @@ impl From<i2c::Error> for TSL2591Error {
 }
 
 /// Provide access to a TSL2591 sensor on the i2c bus.
-///#[derive(Debug)]
+#[derive(Debug)]
 pub struct TSL2591Sensor {
     i2cbus: i2c::I2c,
     gain: Gain,
@@ -149,7 +148,7 @@ pub struct TSL2591Sensor {
 
 impl TSL2591Sensor {
     /// Construct a new TSL2591 sensor on the given i2c bus.
-    /// 
+    ///
     /// The device is returned enabled and ready to use.
     /// The gain and integration times can be changed after returning.
     pub fn new(i2cbus: i2c::I2c) -> Result<TSL2591Sensor, TSL2591Error> {
@@ -158,7 +157,7 @@ impl TSL2591Sensor {
             gain: Gain::MED,
             integration_time: IntegrationTime::Time100ms,
         };
-        
+
         obj.i2cbus.set_slave_address(TSL2591_ADDR)?;
 
         if obj.read_u8(TSL2591_REGISTER_DEVICE_ID)? != 0x50 {
@@ -171,7 +170,7 @@ impl TSL2591Sensor {
         obj.enable()?;
 
         Ok(obj)
-    }       
+    }
 
     /// Read a byte from the given address
     fn read_u8(&self, address: u8) -> Result<u8, TSL2591Error> {
@@ -242,7 +241,7 @@ impl TSL2591Sensor {
     }
 
     /// Read the raw values from the sensor and return a tuple
-    /// The first channel is is IR+Visible luminosity and the 
+    /// The first channel is is IR+Visible luminosity and the
     /// second is IR only.
     fn raw_luminosity(&self) -> Result<(u16, u16), TSL2591Error> {
         let channel0 = self.read_u16(TSL2591_REGISTER_CHAN0_LOW)?;
@@ -251,7 +250,7 @@ impl TSL2591Sensor {
         Ok((channel0, channel1))
     }
 
-    /// Read the full spectrum (IR+Visible) 
+    /// Read the full spectrum (IR+Visible)
     pub fn full_spectrum(&self) -> Result<u32, TSL2591Error> {
         let (chan0, chan1) = self.raw_luminosity()?;
         let chan0 = chan0 as u32;
@@ -303,8 +302,7 @@ impl TSL2591Sensor {
 
         let cp1 = (atime * again) / TSL2591_LUX_DF;
         let lux1 = (chan0 as f32 - (TSL2591_LUX_COEFB * chan0 as f32)) / cp1;
-        let lux2 =
-            ((TSL2591_LUX_COEFC * chan0 as f32) - (TSL2591_LUX_COEFD * chan1 as f32)) / cp1;
+        let lux2 = ((TSL2591_LUX_COEFC * chan0 as f32) - (TSL2591_LUX_COEFD * chan1 as f32)) / cp1;
 
         Ok(lux1.max(lux2))
     }
