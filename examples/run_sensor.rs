@@ -1,7 +1,10 @@
 use rppal::i2c::I2c;
+use simple_signal::{self, Signal};
 
-use tsl2591_sensor::tsl2591_sensor::TSL2591Sensor;
+use tsl2591_sensor::TSL2591Sensor;
 
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -32,7 +35,16 @@ fn main() {
             .expect("Unable to get integration time")
     );
 
-    loop {
+    let running = Arc::new(AtomicBool::new(true));
+
+    simple_signal::set_handler(&[Signal::Int, Signal::Term], {
+        let r = running.clone();
+        move |_signals| {
+            r.store(false, Ordering::SeqCst);
+        }
+    });
+
+    while running.load(Ordering::SeqCst) {
         let visible = lux_dev.visible().unwrap();
         let infrared = lux_dev.infrared().unwrap();
         let full_spectrum = lux_dev.full_spectrum().unwrap();
@@ -45,5 +57,6 @@ fn main() {
         sleep(Duration::from_secs(1));
     }
 
+    println!("Shutting down");
     let _ = lux_dev.disable();
 }

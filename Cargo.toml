@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 rppal = "0.11.3"
+
+[dev-dependencies]
+simple-signal = "1.1.1"
