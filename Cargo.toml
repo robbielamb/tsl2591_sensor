@@ -1,5 +1,5 @@
 [package]
-name = "led_test"
+name = "tsl2591_sensor"
 version = "0.1.0"
 authors = ["Robbie Lamb <lamb@eccentriclamb.com>"]
 edition = "2018"
@@ -7,6 +7,4 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-i2cdev = "0.4.2"
 rppal = "0.11.3"
-rust_gpiozero = "0.2.0"
