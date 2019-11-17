@@ -9,20 +9,8 @@ use std::thread::sleep;
 use std::time::Duration;
 
 fn main() {
-    println!("Hello, world!");
-
-    let i2c = I2c::new().unwrap();
-
-    let lux_dev = TSL2591Sensor::new(i2c).expect("Unable to open lux device: robbie");
-
-    /*   let led = LED::new(26);
-    //let foo  = LinuxI2CDevice::new("device ", 0x23a3).unwrap();
-    loop {
-        led.on();
-        sleep(Duration::from_secs(1));
-        led.off();
-        sleep(Duration::from_secs(1));
-    } */
+    let i2c = I2c::new().expect("Unable to open I2C bus.");
+    let lux_dev = TSL2591Sensor::new(i2c).expect("Unable to open sensor device.");
 
     println!(
         "Gain is: {}",
