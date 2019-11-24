@@ -3,12 +3,13 @@ use simple_signal::{self, Signal};
 
 use tsl2591_sensor::TSL2591Sensor;
 
+use std::error::Error;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Duration;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let i2c = I2c::new().expect("Unable to open I2C bus.");
     let lux_dev = TSL2591Sensor::new(i2c).expect("Unable to open sensor device.");
 
@@ -47,4 +48,6 @@ fn main() {
 
     println!("Shutting down");
     let _ = lux_dev.disable();
+
+    Ok(())
 }
